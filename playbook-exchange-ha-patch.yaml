@@ -115,7 +115,7 @@
         exchange_node_health_gather_only: 'True'
 
     - name: Install all available windows update
-      include_tasks: tasks/windows-update.yaml
+      include_tasks: tasks/patching/windows-update.yaml
       vars:
         ansible_winrm_operation_timeout_sec: 300
         ansible_winrm_read_timeout_sec: 301
