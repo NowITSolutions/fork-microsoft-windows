@@ -101,7 +101,7 @@
 #        kemp_password: "{{ kemp_password }}"
 #        real_server_ip: "{{ real_server_ip }}"
 
-    - name: Install all available windows update
+    - name: Install Windows Updates
       include_tasks: tasks/patching/windows-update.yaml
       vars:
         ansible_winrm_connection_timeout: 1200

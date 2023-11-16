@@ -89,7 +89,7 @@
         data_movement_action: "suspend"
       include_tasks: tasks/sql/windows-sql-ag-data-movement.yaml
 
-    - name: Install all available windows update
+    - name: Install Windows Updates
       include_tasks: tasks/patching/windows-update.yaml
       vars:
         ansible_winrm_operation_timeout_sec: 300

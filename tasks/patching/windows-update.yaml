@@ -79,7 +79,9 @@
     connect_timeout: 5
     sleep: 60
     timeout: 1200
-  when: windows_update_result_all.reboot_required or windows_update_result_specific.reboot_required or windows_update_result_excludeexch.reboot_required
+  when: (windows_update_result_all.reboot_required | default(false)) or
+        (windows_update_result_specific.reboot_required | default(false)) or
+        (windows_update_result_excludeexch.reboot_required | default(false))
 
 - name: Patching Results - All
   ansible.builtin.debug:

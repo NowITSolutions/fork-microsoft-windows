@@ -60,7 +60,7 @@
     - name: Confirm Ansible can communicate with the hosts to be patched
       include_tasks: tasks/test-communication.yaml
 
-    - name: Install all available windows update
+    - name: Install Windows Updates
       include_tasks: tasks/patching/windows-update.yaml
       vars:
         ansible_winrm_connection_timeout: 1200
