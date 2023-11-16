@@ -16,6 +16,7 @@
 #      connection_type: winrm
 #      connection_transport: kerberos
 #      connection_cert_validation: ignore
+#      windows_update_mode: all
 #
 #    Credentials Variables Examples:
 #      WinRM Credentials:
@@ -74,7 +75,7 @@
         rdbrokerfailover_task: 'RDBroker-Failover'
 
     - name: Install all available windows update
-      include_tasks: tasks/patching/windows-update-all.yaml
+      include_tasks: tasks/patching/windows-update.yaml
       vars:
         ansible_winrm_connection_timeout: 1200
         wsus: default

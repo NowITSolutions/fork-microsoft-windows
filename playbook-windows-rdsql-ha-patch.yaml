@@ -16,6 +16,7 @@
 #      connection_type: winrm
 #      connection_transport: kerberos
 #      connection_cert_validation: ignore
+#      windows_update_mode: all
 #
 #    Credentials Variables Examples:
 #      WinRM Credentials:
@@ -89,7 +90,7 @@
       include_tasks: tasks/sql/windows-sql-ag-data-movement.yaml
 
     - name: Install all available windows update
-      include_tasks: tasks/patching/windows-update-all.yaml
+      include_tasks: tasks/patching/windows-update.yaml
       vars:
         ansible_winrm_operation_timeout_sec: 300
         ansible_winrm_read_timeout_sec: 301

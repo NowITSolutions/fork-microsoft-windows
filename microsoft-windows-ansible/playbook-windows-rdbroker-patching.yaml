@@ -19,7 +19,7 @@
       include_tasks: tasks/windows-rdbroker-failover.yaml
 
     - name: Install all available Windows updates
-      include_tasks: tasks/windows-update-all.yaml
+      include_tasks: tasks/windows-update.yaml
 
     - name: If required, update VMTools
       include_role:
