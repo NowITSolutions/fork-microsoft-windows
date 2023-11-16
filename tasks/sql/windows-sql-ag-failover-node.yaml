@@ -23,13 +23,6 @@
     msg: "{{ sql_replica_notactive.stdout }}"
   when: failover_cluster_action == "pause"
 
-- name: Temporary Debug
-  ansible.builtin.debug:
-    msg: 
-    - "{{ sql_current_replica['failover_required'] | default('False') }}"
-    - "{{ (sql_replica_notactive.stdout | default('{}') | from_json | default({}))['failover_required'] | default('False') }}"
-    - "{{ failover_cluster_action }}"
-
 - name: Pause or Resume Windows Failover Cluster Node
   ansible.builtin.script: "scripts/sql/windows-sql-ag-failover-cluster.ps1 -FailoverNode {{ sql_current_replica['failover_to_node'] }} -Action {{ failover_cluster_action }}"
   register: sql_replica_windows_failover_cluster
