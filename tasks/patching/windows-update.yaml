@@ -35,22 +35,22 @@
   delay: 60
   when: windows_update_mode == "all"
 
-- name: Install All Available Windows updates (Excluding Exchange Updates)
-  ansible.windows.win_updates:
-    category_names: '*'
-    reject_list: "{{ reject_updates + [ '.*Exchange.*' ] }}"
-    server_selection: "{{ wsus }}"
-    reboot: yes
-    reboot_timeout: 1200
-    log_path: c:\programdata\ansible_patchlog.log
-  become: yes
-  become_method: runas
-  become_user: "{{ ansible_user }}"
-  register: windows_update_result
-  until: windows_update_result.changed == false
-  retries: 20
-  delay: 60
-  when: windows_update_mode == "excludeexchange"
+#- name: Install All Available Windows updates (Excluding Exchange Updates)
+#  ansible.windows.win_updates:
+#    category_names: '*'
+#    reject_list: "{{ reject_updates + [ '.*Exchange.*' ] }}"
+#    server_selection: "{{ wsus }}"
+#    reboot: yes
+#    reboot_timeout: 1200
+#    log_path: c:\programdata\ansible_patchlog.log
+#  become: yes
+#  become_method: runas
+#  become_user: "{{ ansible_user }}"
+#  register: windows_update_result
+#  until: windows_update_result.changed == false
+#  retries: 20
+#  delay: 60
+#  when: windows_update_mode == "excludeexchange"
 
 #- name: Install Specific Windows updates
 #  ansible.windows.win_updates:
