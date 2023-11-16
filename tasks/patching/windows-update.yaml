@@ -67,6 +67,10 @@
   delay: 60
   when: windows_update_mode == "specific"
 
+- name: debug
+  ansible.builtin.debug:
+    msg: "{{ windows_update_result }}"
+
 - name: Wait for server to come back online
   ansible.builtin.wait_for_connection:
     delay: 0
