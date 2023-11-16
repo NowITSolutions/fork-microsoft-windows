@@ -17,6 +17,12 @@
 #      "default" - this lets the end point decide which update source to use
 #      "managed_server" - this lets you select wsus as the update source to use
 #      "windows_update" - this lets you select Windows public servers as the update source
+#
+# Notes: The way i had to handle the various patching modes is quite annoying.
+# Unfortuntely this is a limitation with how Ansible works, even if a task is skipped, the "register" variable is still recorded.
+# This means that i cannot just refer to "windows_update_result" i have to have 3 versions of it for each patching mode.
+# This is expected behaviour for Ansible: https://github.com/ansible/ansible/issues/15710.
+# This can be managed by using tags, but that added additional execution requirements, and i want to keep this simple.
 
 - name: Install All Available Windows updates
   ansible.windows.win_updates:
@@ -29,47 +35,43 @@
   become: yes
   become_method: runas
   become_user: "{{ ansible_user }}"
-  register: windows_update_result
-  until: windows_update_result.changed == false
+  register: windows_update_result_all
+  until: windows_update_result_all.changed == false
   retries: 20
   delay: 60
   when: windows_update_mode == "all"
 
-#- name: Install All Available Windows updates (Excluding Exchange Updates)
-#  ansible.windows.win_updates:
-#    category_names: '*'
-#    reject_list: "{{ reject_updates + [ '.*Exchange.*' ] }}"
-#    server_selection: "{{ wsus }}"
-#    reboot: yes
-#    reboot_timeout: 1200
-#    log_path: c:\programdata\ansible_patchlog.log
-#  become: yes
-#  become_method: runas
-#  become_user: "{{ ansible_user }}"
-#  register: windows_update_result
-#  until: windows_update_result.changed == false
-#  retries: 20
-#  delay: 60
-#  when: windows_update_mode == "excludeexchange"
+- name: Install All Available Windows updates (Excluding Exchange Updates)
+  ansible.windows.win_updates:
+    category_names: '*'
+    reject_list: "{{ reject_updates + [ '.*Exchange.*' ] }}"
+    server_selection: "{{ wsus }}"
+    reboot: yes
+    reboot_timeout: 1200
+    log_path: c:\programdata\ansible_patchlog.log
+  become: yes
+  become_method: runas
+  become_user: "{{ ansible_user }}"
+  register: windows_update_result_excludeexch
+  until: windows_update_result_excludeexch.changed == false
+  retries: 20
+  delay: 60
+  when: windows_update_mode == "excludeexchange"
 
-#- name: Install Specific Windows updates
-#  ansible.windows.win_updates:
-#    category_names: '*'
-#    accept_list: "{{ kbs_to_install }}"
-#    state: installed
-#    server_selection: "{{ wsus }}"
-#    reboot: yes
-#    reboot_timeout: 1200
-#    log_path: c:\programdata\ansible_patchlog.log
-#  register: windows_update_result
-#  until: windows_update_result.changed == false
-#  retries: 20
-#  delay: 60
-#  when: windows_update_mode == "specific"
-
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ windows_update_result }}"
+- name: Install Specific Windows updates
+  ansible.windows.win_updates:
+    category_names: '*'
+    accept_list: "{{ kbs_to_install }}"
+    state: installed
+    server_selection: "{{ wsus }}"
+    reboot: yes
+    reboot_timeout: 1200
+    log_path: c:\programdata\ansible_patchlog.log
+  register: windows_update_result_specific
+  until: windows_update_result_specific.changed == false
+  retries: 20
+  delay: 60
+  when: windows_update_mode == "specific"
 
 - name: Wait for server to come back online
   ansible.builtin.wait_for_connection:
@@ -77,8 +79,19 @@
     connect_timeout: 5
     sleep: 60
     timeout: 1200
-  when: windows_update_result.reboot_required
+  when: windows_update_result_all.reboot_required or windows_update_result_specific.reboot_required or windows_update_result_excludeexch.reboot_required
 
-- name: debug
+- name: Patching Results - All
   ansible.builtin.debug:
-    msg: "{{ windows_update_result }}"
+    msg: "{{ windows_update_result_all }}"
+  when: windows_update_mode == "all"
+
+- name: Patching Results - Exclude Exchange
+  ansible.builtin.debug:
+    msg: "{{ windows_update_result_excludeexch }}"
+  when: windows_update_mode == "excludeexch"
+
+- name: Patching Results - Specific
+  ansible.builtin.debug:
+    msg: "{{ windows_update_result_specific }}"
+  when: windows_update_mode == "specific" 
