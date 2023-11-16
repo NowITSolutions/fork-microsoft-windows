@@ -85,3 +85,78 @@
     - name: Confirm Ansible can communicate with the hosts to be patched
       include_tasks: tasks/test-communication.yaml
 
+    - name: Confirm Exchange Node Health
+      include_tasks: tasks/exchange/exchange-node-health.yaml
+
+    - name: Disable Real Server
+      ansible.builtin.script:
+        cmd: scripts/kemp/kemp_disable_realserver.py --realserverip "{{ kemp_real_server_ip }}" --kempapiurl "{{ kemp_api_url }}" --kempusername "{{ kemp_api_username }}" --kemppassword "{{ kemp_api_password }}"
+        executable: /usr/bin/python3
+      delegate_to: localhost
+      vars:
+        kemp_api_url: "{{ lb_api_url }}"
+        kemp_api_username: "{{ kemp_username }}"
+        kemp_api_password: "{{ kemp_password }}"
+        kemp_real_server_ip: "{{ real_server_ip }}"
+        ansible_connection: local
+      register: disable_real_server
+      when: lb_ignore != 'True'
+
+    - name: Put Exchange Node into Maintenance Mode
+      include_tasks: tasks/exchange/exchange-node-maintenance.yaml
+      vars:
+        exchange_maintenance_action: suspend
+
+    # This isnt really required, it just runs to give you a point of reference after exchange has been put into maintenance mode.
+    # Maintenance mode verification is done within the powershell script that puts the server into maintenance mode.
+    - name: Confirm Exchange Node Health
+      include_tasks: tasks/exchange/exchange-node-health.yaml
+      vars:
+        exchange_node_health_gather_only: 'True'
+
+    - name: Install all available windows update
+      include_tasks: tasks/windows-update-all.yaml
+      vars:
+        ansible_winrm_operation_timeout_sec: 300
+        ansible_winrm_read_timeout_sec: 301
+        wsus: default
+
+    - name: If required update VMTools
+      include_role:
+        name: arole_vmware
+        tasks_from: vmware-update-tools.yaml
+        apply:
+          delegate_to: localhost
+      vars:
+        hostname: "{{ vm_vcenter }}"
+        datacenter: "{{ vm_datacenter }}"
+        username: "{{ vm_vcenter_username }}"
+        password: "{{ vm_vcenter_password }}"
+        name: "{{ vm_name }}"
+        vm_validate_certs: false
+        ansible_connection: local
+
+    - name: Confirm Ansible can communicate with the patched hosts
+      include_tasks: tasks/test-communication.yaml
+
+    - name: Take Exchange Node out of Maintenance Mode
+      include_tasks: tasks/exchange/exchange-node-maintenance.yaml
+      vars:
+        exchange_maintenance_action: Resume
+
+    - name: Confirm Exchange Node Health
+      include_tasks: tasks/exchange/exchange-node-health.yaml
+
+    - name: Enable Real Server
+      ansible.builtin.script:
+        cmd: scripts/kemp/kemp_enable_realserver.py --realserverip "{{ kemp_real_server_ip }}" --kempapiurl "{{ kemp_api_url }}" --kempusername "{{ kemp_api_username }}" --kemppassword "{{ kemp_api_password }}"
+        executable: /usr/bin/python3
+      delegate_to: localhost
+      vars:
+        kemp_api_url: "{{ lb_api_url }}"
+        kemp_api_username: "{{ kemp_username }}"
+        kemp_api_password: "{{ kemp_password }}"
+        kemp_real_server_ip: "{{ real_server_ip }}"
+        ansible_connection: local
+      register: enable_real_server
+      when: lb_ignore != 'True'
