@@ -9,10 +9,10 @@
 - name: Check for Last Maintenance Timestamp (Pause if 'exchange_maintenance_minimum_delay' has not been met)
   ansible.builtin.pause:
     prompt: |
-      It has only been ({{ lookup('pipe', 'date '+%s') | int }} - {{ maintenance_last_changed }}) since {{ inventory_hostname }} was put into maintenance mode.
-      Progress has been paused for ({{ exchange_maintenance_minimum_delay }} - ({{  lookup('pipe', 'date '+%s') | int }} - {{ maintenance_last_changed }})) seconds.
-    seconds: "{{ exchange_maintenance_minimum_delay }} - ({{  lookup('pipe', 'date '+%s') | int }} - {{ maintenance_last_changed }})"
-  when: maintenance_last_changed is defined and (lookup('pipe', 'date '+%s') | int - maintenance_last_changed | int) < exchange_maintenance_minimum_delay
+      It has only been ({{ lookup('pipe', 'date "+%s"') | int }} - {{ maintenance_last_changed }}) since {{ inventory_hostname }} was put into maintenance mode.
+      Progress has been paused for ({{ exchange_maintenance_minimum_delay }} - ({{  lookup('pipe', 'date "+%s"') | int }} - {{ maintenance_last_changed }})) seconds.
+    seconds: "{{ exchange_maintenance_minimum_delay }} - ({{  lookup('pipe', 'date "+%s"') | int }} - {{ maintenance_last_changed }})"
+  when: maintenance_last_changed is defined and (lookup('pipe', 'date "+%s"') | int - maintenance_last_changed | int) < exchange_maintenance_minimum_delay
 
 - name: Run Health Check for "{{ inventory_hostname }}"
   ansible.builtin.script: "scripts/exchange/exchange-node-health-check.ps1 -Username {{ winrm_username }} -Password {{ winrm_password }}"
