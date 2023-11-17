@@ -8,5 +8,5 @@
   register: exchange_node_maintenance
 
 - name: "Set Fact - {{ inventory_hostname }} Maintenance Mode: {{ exchange_maintenance_action }} Timestamp"
-  ansible.set_fact:
+  ansible.builtin.set_fact:
     maintenance_last_changed: "{{ ansible_date_time }}"
