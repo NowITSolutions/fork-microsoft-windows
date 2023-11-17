@@ -10,8 +10,8 @@
   ansible.builtin.pause:
     prompt: |
       It has only been ({{ lookup('pipe', 'date "+%s"') | int }} - {{ maintenance_last_changed }}) since {{ inventory_hostname }} was put into maintenance mode.
-      Progress has been paused for ({{ exchange_maintenance_minimum_delay }} - ({{  lookup('pipe', 'date "+%s"') | int }} - {{ maintenance_last_changed }})) seconds.
-    seconds: "{{ exchange_maintenance_minimum_delay }} - ({{  lookup('pipe', 'date "+%s"') | int }} - {{ maintenance_last_changed }})"
+      Progress has been paused for ({{ exchange_maintenance_minimum_delay }} - ({{ lookup('pipe', 'date "+%s"') | int }} - {{ maintenance_last_changed }})) seconds.
+    seconds: "{{ exchange_maintenance_minimum_delay | int - ((lookup('pipe', \"date '+%s'\")) | int - maintenance_last_changed | default(0) }})"
   when: maintenance_last_changed is defined and (lookup('pipe', 'date "+%s"') | int - maintenance_last_changed | int) < exchange_maintenance_minimum_delay
 
 - name: Run Health Check for "{{ inventory_hostname }}"
