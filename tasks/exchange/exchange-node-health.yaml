@@ -177,7 +177,8 @@
     - exchange_node_health['mailbox_database_copy_status']
        | map(attribute='CopyQueueLength')
        | select('le', exchange_copy_queue_limit | int)
-       | length > 0
+       | length == exchange_node_health['mailbox_database_copy_status']
+       | length
 
 - name: "Fail Ansible Play if any Exchange Node Database Copy Queue Lengths are over {{ exchange_copy_queue_limit }}."
   ansible.builtin.fail:
@@ -198,7 +199,8 @@
     - exchange_node_health['mailbox_database_copy_status']
        | map(attribute='ReplayqueueLength')
        | select('le', exchange_replay_queue_limit | int)
-       | length > 0
+       | length == exchange_node_health['mailbox_database_copy_status']
+       | length
 
 - name: "Fail Ansible Play if any Exchange Node Database Copy Replay Queue Lengths are over {{ exchange_replay_queue_limit }}."
   ansible.builtin.fail:
