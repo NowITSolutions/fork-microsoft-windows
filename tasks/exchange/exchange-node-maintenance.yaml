@@ -9,4 +9,4 @@
 
 - name: "Set Fact - {{ inventory_hostname }} Maintenance Mode Timestamp"
   ansible.builtin.set_fact:
-    maintenance_last_changed: "{{ lookup('pipe', 'date "+%s"') | int }}"
+    maintenance_last_changed: "{{ lookup('pipe', \"date '+%s'\") | int }}"
