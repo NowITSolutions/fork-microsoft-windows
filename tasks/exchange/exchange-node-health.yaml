@@ -4,8 +4,9 @@
 # exchange_ignore_365_components: 'True'
 # exchange_copy_queue_limit: 10
 # exchange_replay_queue_limit: 10
-# exchange_maintenance_minimum_delay: 300 #In seconds
 
+<<<<<<< HEAD
+=======
 - name: Check for Last Maintenance Timestamp (Pause if 'exchange_maintenance_minimum_delay' has not been met)
   ansible.builtin.pause:
     prompt: |
@@ -14,8 +15,12 @@
     seconds: "{{ exchange_maintenance_minimum_delay | int - ((lookup('ansible.builtin.pipe', \"date '+%s'\") | int) - (maintenance_last_changed | default(0) | int)) }}"
   when: maintenance_last_changed is defined and (lookup('pipe', 'date "+%s"') | int - maintenance_last_changed | int) < exchange_maintenance_minimum_delay | int
 
+>>>>>>> 1f9923385f33258b27a8dcb6c23af66ec64ad897
 - name: Run Health Check for "{{ inventory_hostname }}"
-  ansible.builtin.script: "scripts/exchange/exchange-node-health-check.ps1 -Username {{ winrm_username }} -Password {{ winrm_password }}"
+  ansible.builtin.script: >
+    "scripts/exchange/exchange-node-health-check.ps1"
+    -Username {{ winrm_username }}
+    -Password {{ winrm_password }}
   register: exchange_node_health_check
 
 - name: Parse 'exchange_node_health_check' as JSON and set fact

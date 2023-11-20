@@ -12,6 +12,12 @@
       [string]$FailoverTarget,
       
       [Parameter(Mandatory)]
+      [string]$CopyQueueGoal,
+      
+      [Parameter(Mandatory)]
+      [string]$ReplayQueueGoal,
+      
+      [Parameter(Mandatory)]
       [string]$Action
     )
 
@@ -100,6 +106,24 @@ If ($Action -eq "suspend") {
         # Activate at least one Database on $CurrentExchangeServer
         $InActiveCopies = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.Status -ne "Mounted"}
         Move-ActiveMailboxDatabase $InActiveCopies[0].DatabaseName -ActivateOnServer $CurrentExchangeServer
+        
+        # Wait for all databases to be in either a 'Mounted' or 'Healthy' State
+        Do
+        {
+        $HealthyCopies = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.Status -ne "Healthy" -and $_.Status -ne "Mounted"}
+        } While ($HealthyCopies.count -ne 0)
+
+        # Wait for all databases on $CurrentExchangeServer to have a Copy Queue of under $CopyQueueGoal
+        Do
+        {
+        $CopyQueues = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.CopyQueueLength -gt $CopyQueueGoal}
+        } While ($CopyQueues.count -ne 0)
+
+        # Wait for all databases on $CurrentExchangeServer to have a Copy Queue of under $CopyQueueGoal
+        Do
+        {
+        $ReplayQueues = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.ReplayQueueLength -gt $ReplayQueueGoal}
+        } While ($ReplayQueues.count -ne 0)
 
         # Output Result
         Write-Host "$($CurrentExchangeServer) has exited maintenance mode without error"

@@ -31,6 +31,8 @@
 #      exchange_copy_queue_limit: 10
 #      exchange_replay_queue_limit: 10
 #      windows_update_mode: all
+#      exchange_maintenance_delay: 300
+#        *This is in seconds.
 #
 #    Credentials Variables Examples:
 #      WinRM Credentials:
@@ -160,3 +162,9 @@
         ansible_connection: local
       register: enable_real_server
       when: lb_ignore != 'True'
+
+    - name: Give Exchange "{{ exchange_maintenance_delay }}" Seconds to Stabilise Before Moving onto Next Exchange Server.
+      ansible.builtin.pause:
+        seconds: "{{ exchange_maintenance_delay }}"
+      when:
+        - exchange_maintenance_delay is defined
