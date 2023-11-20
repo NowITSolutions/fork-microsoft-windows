@@ -12,10 +12,10 @@
       [string]$FailoverTarget,
       
       [Parameter(Mandatory)]
-      [string]$CopyQueueGoal,
+      [int32]$CopyQueueGoal,
       
       [Parameter(Mandatory)]
-      [string]$ReplayQueueGoal,
+      [int32]$ReplayQueueGoal,
       
       [Parameter(Mandatory)]
       [string]$Action
@@ -103,9 +103,10 @@ If ($Action -eq "suspend") {
         # Set Exchange Hub Transport Component to 'Active' after maintenance has been completed
         Set-ServerComponentState $CurrentExchangeServer -Component HubTransport -State Active -Requester Maintenance
         
-        # Activate at least one Database on $CurrentExchangeServer
+        # Activate one "Random" Database on $CurrentExchangeServer
         $InActiveCopies = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.Status -ne "Mounted"}
-        $MoveResult = Move-ActiveMailboxDatabase $InActiveCopies[0].DatabaseName -ActivateOnServer $CurrentExchangeServer
+        $MoveNum = (Get-Random -Maximum $InActiveCopies.count)
+        $MoveResult = Move-ActiveMailboxDatabase $InActiveCopies[$MoveNum].DatabaseName -ActivateOnServer $CurrentExchangeServer
         
         # Manual Buffer to give $MoveResult to stabilise - would like to later find a more accurate and dynamic way of monitoring this instead of a hardcoded timer.
             # The reason this is even nessecary is that after activating a database it's queues are below the threshold immediately after the move, with the database in a healthy state.
