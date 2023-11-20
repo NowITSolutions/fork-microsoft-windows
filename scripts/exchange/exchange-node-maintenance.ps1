@@ -105,8 +105,14 @@ If ($Action -eq "suspend") {
         
         # Activate at least one Database on $CurrentExchangeServer
         $InActiveCopies = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.Status -ne "Mounted"}
-        Move-ActiveMailboxDatabase $InActiveCopies[0].DatabaseName -ActivateOnServer $CurrentExchangeServer
+        $MoveResult = Move-ActiveMailboxDatabase $InActiveCopies[0].DatabaseName -ActivateOnServer $CurrentExchangeServer
         
+        # Manual Buffer to give $MoveResult to stabilise - would like to later find a more accurate and dynamic way of monitoring this instead of a hardcoded timer.
+            # The reason this is even nessecary is that after activating a database it's queues are below the threshold immediately after the move, with the database in a healthy state.
+            # However there seems to be a spike within the next 30 seconds or so, that quickly disapates.
+            # One timer here, seems more efficient than two timers in both the Copy and Replay Queue While Loops.
+        Start-Sleep -Seconds 30
+
         # Wait for all databases to be in either a 'Mounted' or 'Healthy' State
         Do
         {
