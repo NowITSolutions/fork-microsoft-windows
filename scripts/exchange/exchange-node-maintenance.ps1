@@ -18,7 +18,10 @@
       [int32]$ReplayQueueGoal,
 
       [Parameter(Mandatory)]
-      [string]$Action
+      [string]$Action,
+
+      [Parameter()]
+      [string]$Debug
     )
 
 # Initalise Variables
@@ -35,20 +38,24 @@
 
 # Debug Variables
 
-    Write-Output $Username
-    Write-Output $Username.gettype()
-    Write-Output $Password
-    Write-Output $Password.gettype()
-    Write-Output $FailoverTarget
-    Write-Output $FailoverTarget.gettype()
-    Write-Output $CopyQueueGoal
-    Write-Output $CopyQueueGoal.gettype()
-    Write-Output $ReplayQueueGoal
-    Write-Output $ReplayQueueGoal.gettype()
-    Write-Output $Action
-    Write-Output $Action.gettype()
-    Write-Output $SystemHostname
-    Write-Output $SystemHostname.gettype()
+    If ($Debug -eq 'True') { 
+        Write-Output $Username
+        Write-Output $Username.gettype()
+        Write-Output $Password
+        Write-Output $Password.gettype()
+        Write-Output $FailoverTarget
+        Write-Output $FailoverTarget.gettype()
+        Write-Output $CopyQueueGoal
+        Write-Output $CopyQueueGoal.gettype()
+        Write-Output $ReplayQueueGoal
+        Write-Output $ReplayQueueGoal.gettype()
+        Write-Output $Action
+        Write-Output $Action.gettype()
+        Write-Output $SystemHostname
+        Write-Output $SystemHostname.gettype()
+        Write-Output $Debug
+        Write-Output $Debug.gettype()
+    }
 
 # Import Required Powershell Modules and SnapIns
 
@@ -111,7 +118,7 @@ If ($Action -eq "suspend") {
         Set-ServerComponentState $CurrentExchangeServer -Component ServerWideOffline -State Active -Requester Maintenance
 
         # If not already started, start Cluster Service
-        if ($service.Status -ne 'Running') {
+        If ($service.Status -ne 'Running') {
             Start-Service -Name 'ClusSvc'
         }
         
