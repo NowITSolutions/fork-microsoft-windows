@@ -47,8 +47,8 @@
     Write-Output $ReplayQueueGoal.gettype()
     Write-Output $Action
     Write-Output $Action.gettype()
-    Write-Output SystemHostname
-    Write-Output SystemHostname.gettype()
+    Write-Output $SystemHostname
+    Write-Output $SystemHostname.gettype()
 
 # Import Required Powershell Modules and SnapIns
 
@@ -80,7 +80,7 @@ If ($Action -eq "suspend") {
         # Disable Database Activation on $CurrentExchangeServer and move any active workloads
         Set-MailboxServer $CurrentExchangeServer -DatabaseCopyActivationDisabledAndMoveNow $true
         Set-MailboxServer $CurrentExchangeServer -DatabaseCopyAutoActivationPolicy Blocked
-        Move-ActiveMailboxDatabase -Server $CurrentExchangeServer
+        $MoveResult = Move-ActiveMailboxDatabase -Server $CurrentExchangeServer
         
         # Wait for all databases on $CurrentExchangeServer to be 'Mounted' elsewhere
         Do
