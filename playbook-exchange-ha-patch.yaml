@@ -168,3 +168,24 @@
         seconds: "{{ exchange_maintenance_delay }}"
       when:
         - exchange_maintenance_delay is defined
+
+- name: Balance Exchange Database Activation
+  hosts: all
+  vars:
+    ansible_user: "{{ winrm_username }}"
+    ansible_password: "{{ winrm_password }}"
+    ansible_port: "{{ connection_port }}"
+    ansible_connection: "{{ connection_type }}"
+    ansible_winrm_transport: "{{ connection_transport }}"
+    ansible_winrm_server_cert_validation: "{{ connection_cert_validation }}"
+  gather_facts: false
+  serial: 1
+  tasks:
+
+    - name: "{{ inventory_hostname }} Balancing Database Activation"
+      ansible.builtin.script: >
+        "scripts/exchange/exchange-balance-dag.ps1"
+        -Username "{{ winrm_username }}"
+        -Password "{{ winrm_password }}"
+        -DAG "{{ exchange_dag }}"
+      register: exchange_node_maintenance
