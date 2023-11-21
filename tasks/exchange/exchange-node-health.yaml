@@ -5,17 +5,6 @@
 # exchange_copy_queue_limit: 10
 # exchange_replay_queue_limit: 10
 
-- name: Debug Vars
-  ansible.builtin.debug:
-    msg:
-      - "{{ windows_update_mode }}"
-      - "{{ exchange_maintenance_delay }}"
-      - "{{ reject_updates }}"
-      - "{{ exchange_ignore_365_components }}"
-      - "{{ exchange_node_health_gather_only }}"
-      - "{{ exchange_copy_queue_limit }}"
-      - "{{ exchange_replay_queue_limit }}"
-
 - name: Run Health Check for "{{ inventory_hostname }}"
   ansible.builtin.script: >
     "scripts/exchange/exchange-node-health-check.ps1"

@@ -12,5 +12,5 @@
     -ReplayQueueGoal "{{ exchange_replay_queue_limit }}"
     -CopyQueueGoal "{{ exchange_copy_queue_limit }}"
     -Action "{{ exchange_maintenance_action }}"
-    "{{ '-Debug "True"' if exchange_maintenance_debug else '' }}"
+    -Debug "{{ exchange_maintenance_debug | default('false') }}"
   register: exchange_node_maintenance
