@@ -9,5 +9,7 @@
     -Username "{{ winrm_username }}"
     -Password "{{ winrm_password }}"
     -FailoverTarget "{{ exchange_failover_target }}"
+    -ReplayQueueGoal "{{ exchange_replay_queue_limit }}"
+    -CopyQueueGoal "{{ exchange_copy_queue_limit }}"
     -Action "{{ exchange_maintenance_action }}"
   register: exchange_node_maintenance

@@ -27,8 +27,8 @@
     $ErrorActionPreference = 'Stop'
     $MailboxDatabaseCopyStatus = @()
     $ServiceHealth = @()
-    $CopyQueueGoal = 10
-    $ReplayQueueGoal = 10
+    #$CopyQueueGoal = 10
+    #$ReplayQueueGoal = 10
     
 # Create Credential Object
 
