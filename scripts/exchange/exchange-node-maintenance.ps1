@@ -11,11 +11,11 @@
       [Parameter(Mandatory)]
       [string]$FailoverTarget,
 
-      #[Parameter(Mandatory)]
-      #[int32]$CopyQueueGoal,
+      [Parameter(Mandatory)]
+      [int32]$CopyQueueGoal,
 
-      #[Parameter(Mandatory)]
-      #[int32]$ReplayQueueGoal,
+      [Parameter(Mandatory)]
+      [int32]$ReplayQueueGoal,
 
       [Parameter(Mandatory)]
       [string]$Action

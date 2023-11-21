@@ -6,8 +6,8 @@
 - name: "{{ inventory_hostname }} Maintenance Mode: {{ exchange_maintenance_action }}"
   ansible.builtin.script: >
     "scripts/exchange/exchange-node-maintenance.ps1"
-    -Username {{ winrm_username }}
-    -Password {{ winrm_password }}
-    -FailoverTarget {{ exchange_failover_target }}
-    -Action {{ exchange_maintenance_action }}
+    -Username "{{ winrm_username }}"
+    -Password "{{ winrm_password }}"
+    -FailoverTarget "{{ exchange_failover_target }}"
+    -Action "{{ exchange_maintenance_action }}"
   register: exchange_node_maintenance
