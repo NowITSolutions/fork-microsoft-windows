@@ -27,13 +27,28 @@
     $ErrorActionPreference = 'Stop'
     $MailboxDatabaseCopyStatus = @()
     $ServiceHealth = @()
-    #$CopyQueueGoal = 10
-    #$ReplayQueueGoal = 10
     
 # Create Credential Object
 
     [securestring]$secStringPassword = ConvertTo-SecureString $Password -AsPlainText -Force
     [pscredential]$credObject = New-Object System.Management.Automation.PSCredential ($Username, $secStringPassword)
+
+# Debug Variables
+
+    Write-Output $Username
+    Write-Output $Username.gettype()
+    Write-Output $Password
+    Write-Output $Password.gettype()
+    Write-Output $FailoverTarget
+    Write-Output $FailoverTarget.gettype()
+    Write-Output $CopyQueueGoal
+    Write-Output $CopyQueueGoal.gettype()
+    Write-Output $ReplayQueueGoal
+    Write-Output $ReplayQueueGoal.gettype()
+    Write-Output $Action
+    Write-Output $Action.gettype()
+    Write-Output SystemHostname
+    Write-Output SystemHostname.gettype()
 
 # Import Required Powershell Modules and SnapIns
 
@@ -95,6 +110,11 @@ If ($Action -eq "suspend") {
         # Set all components of $CurrentExchangeServer to be 'Active' after maintenance has been completed
         Set-ServerComponentState $CurrentExchangeServer -Component ServerWideOffline -State Active -Requester Maintenance
 
+        # If not already started, start Cluster Service
+        if ($service.Status -ne 'Running') {
+            Start-Service -Name 'ClusSvc'
+        }
+        
         # Resume Windows Failover Cluster Node
         Resume-ClusterNode -Name $CurrentExchangeServer
         
