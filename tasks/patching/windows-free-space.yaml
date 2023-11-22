@@ -14,7 +14,7 @@
 # This can be managed by using tags, but that added additional execution requirements, and i want to keep this simple.
 
 - name: C Drive Free Space
-  win_shell: Get-Volume -DriveLetter "{{ disk_letter }}"
+  win_shell: Get-Volume -DriveLetter "{{ disk_letter }}" | ConvertTo-JSON
   register: disk_info
 
 - name: Enough free space on "{{ disk_letter }}" drive to proceed
