@@ -9,10 +9,7 @@
       [string]$Password,
 
       [Parameter(Mandatory)]
-      [string]$DAG,
-
-      [Parameter()]
-      [string]$Debug
+      [string]$DAG
     )
 
 # Initalise Variables
@@ -26,19 +23,6 @@
 
     [securestring]$secStringPassword = ConvertTo-SecureString $Password -AsPlainText -Force
     [pscredential]$credObject = New-Object System.Management.Automation.PSCredential ($Username, $secStringPassword)
-
-# Debug Variables
-
-    If ($Debug -eq 'True') { 
-        Write-Output $Username
-        Write-Output $Username.gettype()
-        Write-Output $Password
-        Write-Output $Password.gettype()
-        Write-Output $DAG
-        Write-Output $DAG.gettype()
-        Write-Output $Debug
-        Write-Output $Debug.gettype()
-    }
 
 # Import Required Powershell Modules and SnapIns
 
