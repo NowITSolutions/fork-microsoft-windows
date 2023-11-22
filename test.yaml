@@ -12,11 +12,22 @@
   serial: 1
   tasks:
 
-    - name: Confirm AG Health
-      include_tasks: tasks/rds/windows-rdbroker-failover.yaml
+    - name: Confirm Ansible can communicate with the hosts to be patched
+      include_tasks: tasks/test-communication.yaml
       vars:
-        amiactive_script: 'C:\temp\windows-rds-broker-active.ps1'
-        amiactive_output: 'C:\temp\AmIActive.json'
-        amiactive_task: 'RDBroker-AmIActive'
-        rdbrokerfailover_script: 'C:\temp\windows-rds-broker-failover.ps1'
-        rdbrokerfailover_task: 'RDBroker-Failover'
+        ansible_user: "{{ winrm_username }}"
+        ansible_password: "{{ winrm_password }}"
+        ansible_port: "{{ connection_port }}"
+        ansible_connection: "{{ connection_type }}"
+        ansible_winrm_transport: "{{ connection_transport }}"
+        ansible_winrm_server_cert_validation: "{{ connection_cert_validation }}"
+
+    - name: Confirm Ansible can communicate with the hosts to be patched
+      include_tasks: tasks/patching/windows-free-space.yaml
+      vars:
+        ansible_user: "{{ winrm_username }}"
+        ansible_password: "{{ winrm_password }}"
+        ansible_port: "{{ connection_port }}"
+        ansible_connection: "{{ connection_type }}"
+        ansible_winrm_transport: "{{ connection_transport }}"
+        ansible_winrm_server_cert_validation: "{{ connection_cert_validation }}"
