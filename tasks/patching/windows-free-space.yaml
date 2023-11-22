@@ -14,7 +14,9 @@
 # This can be managed by using tags, but that added additional execution requirements, and i want to keep this simple.
 
 - name: C Drive Free Space
-  win_shell: Get-Volume -DriveLetter "{{ disk_letter }}" | ConvertTo-JSON
+  ansible.windows.win_shell: |
+    $DiskInfo = Get-Volume -DriveLetter "{{ disk_letter }}"
+    $Diskinfo | Select-Object DriveLetter,FriendlyName,FileSystem,HealthStatus,Size,SizeRemaining | ConvertTo-JSON
   register: disk_info
 
 - name: Enough free space on "{{ disk_letter }}" drive to proceed
