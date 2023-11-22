@@ -19,6 +19,10 @@
     $Diskinfo | Select-Object DriveLetter,FriendlyName,FileSystem,HealthStatus,Size,SizeRemaining | ConvertTo-JSON
   register: disk_info
 
+- name: Debug
+  ansible.builtin.debug:
+    msg: "{{ disk_info }}"
+
 - name: Enough free space on "{{ disk_letter }}" drive to proceed
   ansible.builtin.debug:
     msg: "{{ ansible_host}} has {{ (disk_info.Size | int - disk_info.SizeRemaining | int) | filesizeformat}} free on the {{ disk_letter }} Drive"
