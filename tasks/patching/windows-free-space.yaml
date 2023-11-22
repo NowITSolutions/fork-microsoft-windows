@@ -19,6 +19,10 @@
     $Diskinfo | Select-Object DriveLetter,FriendlyName,FileSystem,HealthStatus,Size,SizeRemaining | ConvertTo-JSON
   register: disk_info
 
+- name: Parse JSON and Set Fact
+  set_fact:
+    disk_info: "{{ disk_info.stdout | from_json }}"
+
 - name: Debug
   ansible.builtin.debug:
     msg: "{{ disk_info }}"
