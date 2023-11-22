@@ -29,7 +29,7 @@
     - "{{ exchange_node_health['node_state'] }}"
   when:
     - exchange_node_health['node_state']['State'] != 'Up'
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
 
 - name: Exchange Node Services Health
   ansible.builtin.debug:
@@ -50,7 +50,7 @@
        | map(attribute='Status')
        | select('equalto', 'ServiceRunning')
        | length != exchange_node_health['service_health'] | length
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
 
 - name: Exchange Node Replication Health
   ansible.builtin.debug:
@@ -71,7 +71,7 @@
        | map(attribute='Result')
        | select('equalto', 'Passed')
        | length != exchange_node_health['replication_health'] | length
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
 
 - name: Exchange Node Component Health (Excluding 365 Component States)
   ansible.builtin.debug:
@@ -102,7 +102,7 @@
        | reject('equalto', 'ProvisioningRps')
        | length
     - exchange_ignore_365_components == 'True'
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
 
 - name: Exchange Node Component Health (Including 365 Component States)
   ansible.builtin.debug:
@@ -127,7 +127,7 @@
        | length != exchange_node_health['server_component_state']
        | length
     - exchange_ignore_365_components != 'True'
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
 
 - name: Exchange Node Database Copy Health
   ansible.builtin.debug:
@@ -148,7 +148,7 @@
        | map(attribute='Status')
        | difference(['Mounted', 'Healthy'])
        | length > 0
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
 
 - name: Exchange Node Database Copy Content Index Health
   ansible.builtin.debug:
@@ -171,7 +171,7 @@
        | select('equalto', 'Healthy')
        | length != exchange_node_health['mailbox_database_copy_status']
        | length
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
 
 - name: Exchange Node Database Copy Queue Length
   ansible.builtin.debug:
@@ -193,7 +193,7 @@
        | map(attribute='CopyQueueLength')
        | select('gt', exchange_copy_queue_limit | int)
        | length > 0
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
 
 - name: Exchange Node Database Copy Replay Queue Length
   ansible.builtin.debug:
@@ -215,4 +215,4 @@
        | map(attribute='ReplayqueueLength')
        | select('gt', exchange_replay_queue_limit | int)
        | length > 0
-    - exchange_node_health_gather_only != 'True'
+    - (exchange_node_health_gather_only | default(false)) != 'True'
