@@ -18,10 +18,7 @@
       [int32]$ReplayQueueGoal,
 
       [Parameter(Mandatory)]
-      [string]$Action,
-
-      [Parameter()]
-      [string]$Debug
+      [string]$Action
     )
 
 # Initalise Variables
@@ -35,27 +32,6 @@
 
     [securestring]$secStringPassword = ConvertTo-SecureString $Password -AsPlainText -Force
     [pscredential]$credObject = New-Object System.Management.Automation.PSCredential ($Username, $secStringPassword)
-
-# Debug Variables
-
-    If ($Debug -eq 'True') { 
-        Write-Output $Username
-        Write-Output $Username.gettype()
-        Write-Output $Password
-        Write-Output $Password.gettype()
-        Write-Output $FailoverTarget
-        Write-Output $FailoverTarget.gettype()
-        Write-Output $CopyQueueGoal
-        Write-Output $CopyQueueGoal.gettype()
-        Write-Output $ReplayQueueGoal
-        Write-Output $ReplayQueueGoal.gettype()
-        Write-Output $Action
-        Write-Output $Action.gettype()
-        Write-Output $SystemHostname
-        Write-Output $SystemHostname.gettype()
-        Write-Output $Debug
-        Write-Output $Debug.gettype()
-    }
 
 # Import Required Powershell Modules and SnapIns
 
