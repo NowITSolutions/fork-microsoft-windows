@@ -21,14 +21,14 @@
 
 - name: Enough free space on "{{ disk_letter }}" drive to proceed
   ansible.builtin.debug:
-    msg: "{{ ansible_host}} has {{ (disk_info.size | int - disk_info.sizeremaining | int) | filesizeformat}} free on the {{ disk_letter }} Drive"
-  when: (disk_info.size | int - disk_info.sizeremaining | int) | filesizeformat >= disk_minimum_free
+    msg: "{{ ansible_host}} has {{ (disk_info.Size | int - disk_info.SizeRemaining | int) | filesizeformat}} free on the {{ disk_letter }} Drive"
+  when: (disk_info.Size | int - disk_info.SizeRemaining | int) | filesizeformat >= disk_minimum_free
 
 - name: Fail Ansible Play if there isnt enough free space on "{{ disk_letter }}" drive to proceed
   ansible.builtin.fail:
     msg:
-    - "{{ ansible_host}} has {{ (disk_info.size | int - disk_info.sizeremaining | int) | filesizeformat}} free on the {{ disk_letter }} Drive"
+    - "{{ ansible_host}} has {{ (disk_info.Size | int - disk_info.SizeRemaining | int) | filesizeformat}} free on the {{ disk_letter }} Drive"
     - "Not enough free space to proceed."
     - "{{ disk_info }}"
   when:
-    - (disk_info.size | int - disk_info.sizeremaining | int) | filesizeformat <= disk_minimum_free
+    - (disk_info.Size | int - disk_info.SizeRemaining | int) | filesizeformat < disk_minimum_free
