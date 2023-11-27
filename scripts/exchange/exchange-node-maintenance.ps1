@@ -78,6 +78,18 @@ If ($Action -eq "suspend") {
             {
             $HealthyCopies = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.Status -ne "Healthy"}
             } While ($HealthyCopies.count -ne 0)
+
+            # Wait for all databases on $CurrentExchangeServer to have a Copy Queue of under $CopyQueueGoal
+            Do
+            {
+            $CopyQueues = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.CopyQueueLength -gt $CopyQueueGoal}
+            } While ($CopyQueues.count -ne 0)
+
+            # Wait for all databases on $CurrentExchangeServer to have a Copy Queue of under $CopyQueueGoal
+            Do
+            {
+            $ReplayQueues = Get-MailboxDatabaseCopyStatus -Server $CurrentExchangeServer | Where {$_.ReplayQueueLength -gt $ReplayQueueGoal}
+            } While ($ReplayQueues.count -ne 0)
         }
         
         # Set all components of $CurrentExchangeServer to be 'InActive' for Maintenance
