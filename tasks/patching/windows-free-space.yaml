@@ -38,7 +38,7 @@
   ansible.builtin.fail:
     msg:
     - "{{ ansible_host }} has {{ disk_info.SizeRemaining | int | filesizeformat }} free on the {{ disk_info.Size | int | filesizeformat }} {{ disk_letter }}: Drive"
-    - "{{ disk_info.SizeRemaining | int | filesizeformat }} is {{ (disk_info.SizeRemaining | int / disk_info.Size | int) * 100 | round }}% free on the {{ disk_letter }} Drive"
+    - "{{ disk_info.SizeRemaining | int | filesizeformat }} is {{ ((disk_info.SizeRemaining | int / disk_info.Size | int) * 100) | round }}% free on the {{ disk_letter }} Drive"
     - "A minimum of {{ disk_minimum_free }} is required.  Not enough free space to proceed."
     - "{{ disk_info }}"
   when:
