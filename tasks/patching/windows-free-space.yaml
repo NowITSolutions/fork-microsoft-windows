@@ -2,16 +2,8 @@
 # This task will fail the Ansible play if the system does not have sufficient free space to proceed with Windows Updates.
 #
 # Required Variable:
-#  - {{ wsus }} : This can be one of three options:
-#      "default" - this lets the end point decide which update source to use
-#      "managed_server" - this lets you select wsus as the update source to use
-#      "windows_update" - this lets you select Windows public servers as the update source
-#
-# Notes: The way i had to handle the various patching modes is quite annoying.
-# Unfortuntely this is a limitation with how Ansible works, even if a task is skipped, the "register" variable is still recorded.
-# This means that i cannot just refer to "windows_update_result" i have to have 3 versions of it for each patching mode.
-# This is expected behaviour for Ansible: https://github.com/ansible/ansible/issues/15710.
-# This can be managed by using tags, but that added additional execution requirements, and i want to keep this simple.
+#  - {{ disk_minimum_free }} : The free space required to proceed in GB e.g '10'
+#  - {{ disk_letter }} : The drive letter to apply the limit to e.g 'C'
 
 - name: C Drive Free Space
   ansible.windows.win_shell: |

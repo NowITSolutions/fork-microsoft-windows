@@ -33,6 +33,8 @@
 #      windows_update_mode: all
 #      exchange_maintenance_delay: 300
 #        *This is in seconds.
+#      disk_minimum_free: 10
+#      disk_letter: C
 #
 #    Credentials Variables Examples:
 #      WinRM Credentials:
@@ -89,6 +91,9 @@
 
     - name: Confirm Exchange Node Health
       include_tasks: tasks/exchange/exchange-node-health.yaml
+
+    - name: Confirm Enough Free Space on C Drive
+      include_tasks: tasks/patching/windows-free-space.yaml
 
     - name: Disable Real Server
       ansible.builtin.script:
