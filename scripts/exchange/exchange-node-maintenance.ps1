@@ -67,6 +67,21 @@ If ($Action -eq "suspend") {
         
         # If the Current Exchange Server has Databases Wait for Database Health
         If ((Get-MailboxDatabase -Server $CurrentExchangeServer).count -ne 0) {
+
+            # Manual Buffer to give $MoveResult to stabilise - would like to later find a more accurate and dynamic way of monitoring this instead of a hardcoded timer.
+                # The reason this is even nessecary is that after activating a database it's queues are below the threshold immediately after the move, with the database in a healthy state.
+                # However there seems to be a spike within the next 60 seconds or so, that quickly disapates.
+                # One timer here, seems more efficient than two timers in both the Copy and Replay Queue While Loops.
+            Start-Sleep -Seconds 60
+            
+            # Wait 1 Minute for Each Database to Allow Time to Stabilise
+                # Manual Buffer to give databases time to stabilise - would like to later find a more accurate and dynamic way of monitoring this instead of a hardcoded timer.
+                # The reason this is even nessecary is that after activating a database it's queues are below the threshold immediately after the move, with the database in a healthy state.
+                # However there seems to be a spike after the queue checks below have run, which means they are ineffective.
+                # One timer here, seems more efficient than two timers in both the Copy and Replay Queue While Loops.
+            #$SleepSeconds = (Get-MailboxDatabase -Server $CurrentExchangeServer).count * 60
+            #Start-Sleep -Seconds $SleepSeconds
+
             # Wait for all databases on $CurrentExchangeServer to be 'Mounted' elsewhere
             Do
             {
